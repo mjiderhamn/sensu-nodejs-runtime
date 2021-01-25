@@ -1,0 +1,27 @@
+# Inspired by https://github.com/sensu/sensu-ruby-runtime/blob/main/Dockerfile.alpine
+
+# cat /etc/os-release to find Alpine version of current sensu/sensu image
+FROM alpine:3.12.3
+
+ARG NODE_VERSION=12.20.1-r0
+ARG ASSET_VERSION=local_build
+
+RUN apk add --virtual node.deps nodejs=${NODE_VERSION} && \
+  mkdir -p /opt/nodejs/nodejs-${NODE_VERSION}/bin/ && \
+  mkdir -p /opt/nodejs/nodejs-${NODE_VERSION}/lib/
+
+RUN BINS=$(apk info -L nodejs 2>/dev/null | grep "^usr/bin" | sort -u ) && \
+  for f in $BINS; do if [ -e $f ]; then echo "Copying binary: /$f" && cp /$f /opt/nodejs/nodejs-${NODE_VERSION}/bin/; fi; done
+
+RUN DIRECT_LIB_FILES=$(apk info --depends nodejs 2>/dev/null | grep "so:" | sort -u | sed 's/so\:/\/usr\/lib\//' ) && \
+  DEPENDENCIES=$(echo "$(for l in $DIRECT_LIB_FILES; do apk info --who-owns "$l" 2>/dev/null | cut -d ' ' -f 5 | sed -E 's/(.+)-([^-]+)-r([^-]+)/\1/'; done)" | sort -u) && \
+  ALL_LIB_FILES=$(for d in $DEPENDENCIES; do apk info -L $d 2>/dev/null | grep "^usr/lib"; done) && \
+  for f in $ALL_LIB_FILES; do if [[ -e "$f" ]]; then echo "Copying library: $f" && cp -P $f /opt/nodejs/nodejs-${NODE_VERSION}/lib/; fi; done
+# We could exclude symbolic links pointing to "/lib", i.e. [[ "$(dirname "$(readlink -f $f)")" == "/lib" ]]
+
+
+RUN mkdir /assets/ && \
+  export SENSU_ASSET="/assets/sensu-nodejs-runtime_${ASSET_VERSION}_nodejs-${NODE_VERSION}_alpine_$(uname -s | tr '[:upper:]' '[:lower:]')_amd64.tar.gz" && \
+  tar -czf $SENSU_ASSET -C /opt/nodejs/nodejs-${NODE_VERSION}/ .
+
+ENV PATH=$PATH:/opt/nodejs/nodejs-${NODE_VERSION}/bin
