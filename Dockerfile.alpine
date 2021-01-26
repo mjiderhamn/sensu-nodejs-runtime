@@ -3,10 +3,10 @@
 # cat /etc/os-release to find Alpine version of current sensu/sensu image
 FROM alpine:3.12.3
 
-ARG NODE_VERSION=12.20.1-r0
+ARG NODE_VERSION=12.20.1
 ARG ASSET_VERSION=local_build
 
-RUN apk add --virtual node.deps nodejs=${NODE_VERSION} && \
+RUN apk add nodejs~=${NODE_VERSION} && \
   mkdir -p /opt/nodejs/nodejs-${NODE_VERSION}/bin/ && \
   mkdir -p /opt/nodejs/nodejs-${NODE_VERSION}/lib/
 
