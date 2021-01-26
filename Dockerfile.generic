@@ -2,7 +2,7 @@
 FROM centos:7
 
 ARG NODE_VERSION=12.20.1
-ARG ASSET_VERSION=local_build
+ARG ASSET_VERSION=local-build
 
 RUN mkdir -p /opt/nodejs && cd /opt/nodejs && \
   curl https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz -o /opt/nodejs/node-v${NODE_VERSION}-linux-x64.tar.gz && \

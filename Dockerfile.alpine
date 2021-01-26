@@ -4,7 +4,7 @@
 FROM alpine:3.12.3
 
 ARG NODE_VERSION=12.20.1
-ARG ASSET_VERSION=local_build
+ARG ASSET_VERSION=local-build
 
 RUN apk add nodejs~=${NODE_VERSION} && \
   mkdir -p /opt/nodejs/nodejs-${NODE_VERSION}/bin/ && \
