@@ -1,0 +1,33 @@
+# Inspired by https://github.com/sensu/sensu-ruby-runtime/blob/main/.github/workflows/ci.yaml
+name: Build sensu-nodejs-runtime
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      id: checkout
+      uses: actions/checkout@v2
+    - name: Get the version
+      id: get_version
+      if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    - name: echo settings
+      id: echo_settings
+      run: "echo version: ${{ steps.get_version.outputs.VERSION }}"
+    - name: Build and test alpine
+      env:
+        TAG: ${{ steps.get_version.outputs.VERSION }}
+        REPO_SLUG: ${{ github.repository }}
+      run: ./build_scripts/build_alpine_platforms.sh
+    - name: create checksum file
+      run: ./checksum.sh
+    - name: Release tagged version
+      if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+      env:
+        TAG: ${{ steps.get_version.outputs.VERSION }}
+        REPO_SLUG: ${{ github.repository }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: ./upload.sh
