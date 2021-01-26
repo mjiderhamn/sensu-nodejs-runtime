@@ -10,12 +10,12 @@ systems running the new Sensu Go Agent via the new Sensu's new Asset framework
 (i.e. avoiding solutions that would require a Node.JS runtime to be redundantly
 packaged with every Node.JS-based plugin).
 
-
 ## Platform Coverage
 
-Currently, this repository only supports a Alpine 3.9+, upon which the
+Currently, this repository supports "generic" Linux (including the 
+[official `sensu/sensu-rhel` Docker image](https://hub.docker.com/r/sensu/sensu-rhel))
+and Alpine 3.9+, upon which the
 [official `sensu/sensu` Docker image](https://hub.docker.com/r/sensu/sensu) is built.
  
-of Linux distribution by making use of Docker containers to build and test.
 If you would like extend the coverage, please take a look at the Github Action integration and associated `Dockerfile`s
 and build scripts. I'm happy to take pull requests that extending the platform coverage.

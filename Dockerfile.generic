@@ -1,0 +1,15 @@
+# cat /etc/redhat-release to find Alpine version of current sensu/sensu-rhel image
+FROM centos:7
+
+ARG NODE_VERSION=12.20.1
+ARG ASSET_VERSION=local_build
+
+RUN mkdir -p /opt/nodejs && cd /opt/nodejs && \
+  curl https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz -o /opt/nodejs/node-v${NODE_VERSION}-linux-x64.tar.gz && \
+  tar xzf /opt/nodejs/node-v${NODE_VERSION}-linux-x64.tar.gz && \
+  mkdir -p /opt/nodejs/nodejs-${NODE_VERSION}/bin/ && \
+  cp /opt/nodejs/node-v${NODE_VERSION}-linux-x64/bin/node /opt/nodejs/nodejs-${NODE_VERSION}/bin/
+
+RUN mkdir /assets/ && \
+  export SENSU_ASSET="/assets/sensu-nodejs-runtime_${ASSET_VERSION}_nodejs-${NODE_VERSION}_generic_linux_amd64.tar.gz" && \
+  tar -czf $SENSU_ASSET -C /opt/nodejs/nodejs-${NODE_VERSION}/ .

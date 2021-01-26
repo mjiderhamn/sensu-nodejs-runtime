@@ -22,6 +22,11 @@ jobs:
         TAG: ${{ steps.get_version.outputs.VERSION }}
         REPO_SLUG: ${{ github.repository }}
       run: ./build_scripts/build_alpine_platforms.sh
+    - name: Build and test generic Linux on CentOS
+      env:
+        TAG: ${{ steps.get_version.outputs.VERSION }}
+        REPO_SLUG: ${{ github.repository }}
+      run: ./build_scripts/build_generic_platforms.sh
     - name: create checksum file
       run: ./checksum.sh
     - name: Release tagged version
