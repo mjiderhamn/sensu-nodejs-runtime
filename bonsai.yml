@@ -9,4 +9,4 @@ builds:
   -  "entity.system.arch == 'amd64'"
   -  "entity.system.platform == 'alpine'"
   -  "entity.system.platform_version.split('.')[0] == '3'"
-  -  "entity.system.platform_version.split('.')[1] >= '9'"
+  -  "parseInt(entity.system.platform_version.split('.')[1]) >= 9"
