@@ -16,8 +16,7 @@ RUN BINS=$(apk info -L nodejs 2>/dev/null | grep "^usr/bin" | sort -u ) && \
 RUN DIRECT_LIB_FILES=$(apk info --depends nodejs 2>/dev/null | grep "so:" | sort -u | sed 's/so\:/\/usr\/lib\//' ) && \
   DEPENDENCIES=$(echo "$(for l in $DIRECT_LIB_FILES; do apk info --who-owns "$l" 2>/dev/null | cut -d ' ' -f 5 | sed -E 's/(.+)-([^-]+)-r([^-]+)/\1/'; done)" | sort -u) && \
   ALL_LIB_FILES=$(for d in $DEPENDENCIES; do apk info -L $d 2>/dev/null | grep "^usr/lib"; done) && \
-  for f in $ALL_LIB_FILES; do if [[ -e "$f" ]]; then echo "Copying library: $f" && cp -P $f /opt/nodejs/nodejs-${NODE_VERSION}/lib/; fi; done
-# We could exclude symbolic links pointing to "/lib", i.e. [[ "$(dirname "$(readlink -f $f)")" == "/lib" ]]
+  for f in $ALL_LIB_FILES; do if [[ -e "$f" && "$(dirname "$(readlink -f $f)")" != "/lib" ]]; then echo "Copying library: $f" && cp -P $f /opt/nodejs/nodejs-${NODE_VERSION}/lib/; fi; done
 
 
 RUN mkdir /assets/ && \
