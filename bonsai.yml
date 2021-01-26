@@ -1,0 +1,12 @@
+description: "#{repo}"
+builds:
+- platform: "alpine"
+  arch: "amd64"
+  asset_filename: "#{repo}_#{version}_nodejs-12.20.1-r0_alpine_linux_amd64.tar.gz"
+  sha_filename: "#{repo}_#{version}_sha512-checksums.txt"
+  filter:
+  -  "entity.system.os == 'linux'"
+  -  "entity.system.arch == 'amd64'"
+  -  "entity.system.platform == 'alpine'"
+  -  "entity.system.platform_version.split('.')[0] == '3'"
+  -  "entity.system.platform_version.split('.')[1] >= '9'"
